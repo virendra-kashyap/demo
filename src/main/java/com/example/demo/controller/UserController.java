@@ -31,120 +31,131 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserController {
 
-        private final UserService userService;
+    private final UserService userService;
 
-        @Operation(summary = "Create User", description = "Creates a new user")
-        @PostMapping
-        public ResponseEntity<ApiResponse<UserResponseDto>> createUser(
-                        @Valid @RequestBody UserRequestDto request) {
+    @Operation(summary = "Create User", description = "Creates a new user")
+    @PostMapping
+    public ResponseEntity<ApiResponse<UserResponseDto>> createUser(
+            @Valid @RequestBody UserRequestDto request) {
 
-                log.info("Create user request received: {}", request);
-                UserResponseDto response = userService.createUser(request);
+        log.info("Create user request received: {}", request);
+        UserResponseDto response = userService.createUser(request);
 
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(ApiResponse.<UserResponseDto>builder()
-                                                .success(true)
-                                                .message("User created successfully")
-                                                .data(response)
-                                                .build());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.<UserResponseDto>builder()
+                        .success(true)
+                        .message("User created successfully")
+                        .data(response)
+                        .build());
+    }
 
-        @Operation(summary = "Get User By Id", description = "Fetch user details using ID")
-        @GetMapping("/{id}")
-        public ResponseEntity<ApiResponse<UserResponseDto>> getUser(
-                        @PathVariable Long id) {
+    @Operation(summary = "Get User By Id", description = "Fetch user details using ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> getUser(
+            @PathVariable Long id) {
 
-                log.info("Fetch user request received for id={}", id);
-                UserResponseDto response = userService.getUser(id);
+        log.info("Fetch user request received for id={}", id);
+        UserResponseDto response = userService.getUser(id);
 
-                return ResponseEntity.ok(
-                                ApiResponse.<UserResponseDto>builder()
-                                                .success(true)
-                                                .message("User fetched successfully")
-                                                .data(response)
-                                                .build());
-        }
+        return ResponseEntity.ok(
+                ApiResponse.<UserResponseDto>builder()
+                        .success(true)
+                        .message("User fetched successfully")
+                        .data(response)
+                        .build());
+    }
 
-        @Operation(summary = "Update User", description = "Update user details using ID")
-        @PutMapping("/{id}")
-        public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(
-                        @PathVariable Long id,
-                        @Valid @RequestBody UserRequestDto request) {
+    @Operation(summary = "Update User", description = "Update user details using ID")
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserRequestDto request) {
 
-                log.info("Update user request received for id={} payload={}", id, request);
-                UserResponseDto response = userService.updateUser(id, request);
+        log.info("Update user request received for id={} payload={}", id, request);
+        UserResponseDto response = userService.updateUser(id, request);
 
-                return ResponseEntity.ok(
-                                ApiResponse.<UserResponseDto>builder()
-                                                .success(true)
-                                                .message("User updated successfully")
-                                                .data(response)
-                                                .build());
-        }
+        return ResponseEntity.ok(
+                ApiResponse.<UserResponseDto>builder()
+                        .success(true)
+                        .message("User updated successfully")
+                        .data(response)
+                        .build());
+    }
 
-        @Operation(summary = "Delete User", description = "Delete user using ID")
-        @DeleteMapping("/{id}")
-        public ResponseEntity<ApiResponse<String>> deleteUser(
-                        @PathVariable Long id) {
+    @Operation(summary = "Delete User", description = "Soft delete user using ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteUser(
+            @PathVariable Long id) {
 
-                log.info("Delete user request received for id={}", id);
-                userService.deleteUser(id);
+        log.info("Delete user request received for id={}", id);
+        userService.deleteUser(id);
 
-                return ResponseEntity.ok(
-                                ApiResponse.<String>builder()
-                                                .success(true)
-                                                .message("User deleted successfully")
-                                                .data("Deleted")
-                                                .build());
-        }
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .success(true)
+                        .message("User deleted successfully")
+                        .data("Deleted")
+                        .build());
+    }
 
-        @Operation(summary = "Get Users", description = "Fetch list of users")
-        @GetMapping
-        public ResponseEntity<ApiResponse<Page<UserResponseDto>>> getUsers(
-                        @RequestParam(defaultValue = "0") int page,
-                        @RequestParam(defaultValue = "10") int size,
-                        @RequestParam(defaultValue = "id") String sortBy,
-                        @RequestParam(defaultValue = "asc") String direction) {
+    @Operation(summary = "Restore User", description = "Restore a soft-deleted user")
+    @PostMapping("/{id}/restore")
+    public ResponseEntity<ApiResponse<UserResponseDto>> restoreUser(
+            @PathVariable Long id) {
 
-                log.info("Get users request received page={} size={} sortBy={} direction={}",
-                                page,
-                                size,
-                                sortBy,
-                                direction);
-                return ResponseEntity.ok(
-                                ApiResponse.<Page<UserResponseDto>>builder()
-                                                .success(true)
-                                                .message("Users fetched successfully")
-                                                .data(userService.getUsers(page, size, sortBy, direction))
-                                                .build());
-        }
+        log.info("Restore user request received for id={}", id);
+        UserResponseDto response = userService.restoreUser(id);
 
-        @Operation(summary = "Search Users", description = "Search users by name")
-        @GetMapping("/search")
-        public ResponseEntity<ApiResponse<Page<UserResponseDto>>> searchUsers(
-                        @RequestParam String name,
-                        @RequestParam(defaultValue = "0") int page,
-                        @RequestParam(defaultValue = "10") int size,
-                        @RequestParam(defaultValue = "id") String sortBy,
-                        @RequestParam(defaultValue = "asc") String direction) {
+        return ResponseEntity.ok(
+                ApiResponse.<UserResponseDto>builder()
+                        .success(true)
+                        .message("User restored successfully")
+                        .data(response)
+                        .build());
+    }
 
-                log.info("Search users request received name={} page={} size={} sortBy={} direction={}",
-                                name,
-                                page,
-                                size,
-                                sortBy,
-                                direction);
-                return ResponseEntity.ok(
-                                ApiResponse.<Page<UserResponseDto>>builder()
-                                                .success(true)
-                                                .message("Users fetched successfully")
-                                                .data(userService.searchUsers(
-                                                                name,
-                                                                page,
-                                                                size,
-                                                                sortBy,
-                                                                direction))
-                                                .build());
-        }
+    @Operation(summary = "Get Users", description = "Fetch list of users")
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<UserResponseDto>>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
 
+        log.info("Get users request received page={} size={} sortBy={} direction={}",
+                page, size, sortBy, direction);
+        return ResponseEntity.ok(
+                ApiResponse.<Page<UserResponseDto>>builder()
+                        .success(true)
+                        .message("Users fetched successfully")
+                        .data(userService.getUsers(page, size, sortBy, direction))
+                        .build());
+    }
+
+    @Operation(summary = "Search Users", description = "Search users with dynamic filters")
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<UserResponseDto>>> searchUsers(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String mobileNumber,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String createdDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        log.info("Search users request received firstName={} lastName={} email={} mobileNumber={} department={} role={} createdDate={} page={} size={} sortBy={} direction={}",
+                firstName, lastName, email, mobileNumber, department, role, createdDate, page, size, sortBy, direction);
+        return ResponseEntity.ok(
+                ApiResponse.<Page<UserResponseDto>>builder()
+                        .success(true)
+                        .message("Users fetched successfully")
+                        .data(userService.searchUsers(firstName, lastName, email,
+                                mobileNumber, department, role, createdDate,
+                                page, size, sortBy, direction))
+                        .build());
+    }
 }

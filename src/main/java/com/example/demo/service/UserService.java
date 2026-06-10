@@ -11,19 +11,25 @@ public interface UserService {
 
     UserResponseDto getUser(Long id);
 
-    UserResponseDto updateUser(
-            Long id,
-            UserRequestDto request);
+    UserResponseDto updateUser(Long id, UserRequestDto request);
 
     void deleteUser(Long id);
+
+    UserResponseDto restoreUser(Long id);
 
     Page<UserResponseDto> getUsers(int page, int size, String sortBy, String direction);
 
     Page<UserResponseDto> searchUsers(
-            String name,
+            String firstName,
+            String lastName,
+            String email,
+            String mobileNumber,
+            String department,
+            String role,
+            String createdDate,
             int page,
             int size,
             String sortBy,
             String direction);
-
 }
+

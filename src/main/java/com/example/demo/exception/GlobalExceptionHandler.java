@@ -56,4 +56,15 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(com.example.demo.exception.DepartmentNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDepartmentNotFound(
+            com.example.demo.exception.DepartmentNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
+                        .build());
+    }
+
 }
