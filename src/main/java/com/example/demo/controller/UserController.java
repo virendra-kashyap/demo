@@ -22,7 +22,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Tag(name = "User APIs", description = "User Management APIs")
 @RestController
 @RequestMapping("/api/users")
@@ -36,6 +38,7 @@ public class UserController {
         public ResponseEntity<ApiResponse<UserResponseDto>> createUser(
                         @Valid @RequestBody UserRequestDto request) {
 
+                log.info("Create user request received: {}", request);
                 UserResponseDto response = userService.createUser(request);
 
                 return ResponseEntity.status(HttpStatus.CREATED)
@@ -51,6 +54,7 @@ public class UserController {
         public ResponseEntity<ApiResponse<UserResponseDto>> getUser(
                         @PathVariable Long id) {
 
+                log.info("Fetch user request received for id={}", id);
                 UserResponseDto response = userService.getUser(id);
 
                 return ResponseEntity.ok(
@@ -67,6 +71,7 @@ public class UserController {
                         @PathVariable Long id,
                         @Valid @RequestBody UserRequestDto request) {
 
+                log.info("Update user request received for id={} payload={}", id, request);
                 UserResponseDto response = userService.updateUser(id, request);
 
                 return ResponseEntity.ok(
@@ -82,6 +87,7 @@ public class UserController {
         public ResponseEntity<ApiResponse<String>> deleteUser(
                         @PathVariable Long id) {
 
+                log.info("Delete user request received for id={}", id);
                 userService.deleteUser(id);
 
                 return ResponseEntity.ok(
@@ -100,6 +106,11 @@ public class UserController {
                         @RequestParam(defaultValue = "id") String sortBy,
                         @RequestParam(defaultValue = "asc") String direction) {
 
+                log.info("Get users request received page={} size={} sortBy={} direction={}",
+                                page,
+                                size,
+                                sortBy,
+                                direction);
                 return ResponseEntity.ok(
                                 ApiResponse.<Page<UserResponseDto>>builder()
                                                 .success(true)
@@ -117,6 +128,12 @@ public class UserController {
                         @RequestParam(defaultValue = "id") String sortBy,
                         @RequestParam(defaultValue = "asc") String direction) {
 
+                log.info("Search users request received name={} page={} size={} sortBy={} direction={}",
+                                name,
+                                page,
+                                size,
+                                sortBy,
+                                direction);
                 return ResponseEntity.ok(
                                 ApiResponse.<Page<UserResponseDto>>builder()
                                                 .success(true)

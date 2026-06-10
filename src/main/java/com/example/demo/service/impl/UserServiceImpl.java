@@ -18,7 +18,9 @@ import com.example.demo.response.UserResponseDto;
 import com.example.demo.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,6 +34,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto createUser(UserRequestDto request) {
 
+        log.info("Creating user with firstName={} lastName={} email={}",
+                request.getFirstName(),
+                request.getLastName(),
+                request.getEmail());
+
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -41,11 +48,13 @@ public class UserServiceImpl implements UserService {
 
         user = userRepository.save(user);
 
+        log.info("User created with id={}", user.getId());
         return userMapper.toResponse(user);
     }
 
     @Override
     public UserResponseDto getUser(Long id) {
+        log.info("Retrieving user by id={}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(
                         "User not found with id " + id));
@@ -55,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto updateUser(Long id, UserRequestDto request) {
+        log.info("Updating user id={} with request={}", id, request);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(
                         "User not found with id " + id));
@@ -66,28 +76,38 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
+        log.info("User updated successfully id={}", id);
         return userMapper.toResponse(user);
     }
 
     @Override
     public void deleteUser(Long id) {
+        log.info("Deleting user id={}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(
                         "User not found with id " + id));
 
         userRepository.delete(user);
+        log.info("User deleted successfully id={}", id);
     }
 
     @Override
     public Page<UserResponseDto> getUsers(int page, int size, String sortBy, String direction) {
 
+        log.info("Listing users page={} size={} sortBy={} direction={}",
+                page,
+                size,
+                sortBy,
+                direction);
+
         if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            log.warn("Invalid sort field requested: {}", sortBy);
             throw new IllegalArgumentException("Invalid sort field");
         }
 
         if (!direction.equalsIgnoreCase("asc")
                 && !direction.equalsIgnoreCase("desc")) {
-
+            log.warn("Invalid sort direction requested: {}", direction);
             throw new IllegalArgumentException(
                     "Direction must be asc or desc");
         }
@@ -109,14 +129,22 @@ public class UserServiceImpl implements UserService {
             String sortBy,
             String direction) {
 
+        log.info("Searching users name={} page={} size={} sortBy={} direction={}",
+                name,
+                page,
+                size,
+                sortBy,
+                direction);
+
         if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+            log.warn("Invalid sort field requested: {}", sortBy);
             throw new IllegalArgumentException(
                     "Invalid sort field");
         }
 
         if (!direction.equalsIgnoreCase("asc")
                 && !direction.equalsIgnoreCase("desc")) {
-
+            log.warn("Invalid sort direction requested: {}", direction);
             throw new IllegalArgumentException(
                     "Direction must be asc or desc");
         }
